@@ -1,19 +1,21 @@
-#PDF Merger Web App
+# PDF Merger Web App
 This web application allows you to merge multiple PDF files into one.
+There is an open source online version or a local one.
+This is made for those who do not use Adobe and who do not want to use an online tool.
 
-##Online version
+## Online version
 An online version of the application is available at the following address:
 
 https://pdfmergerhugolepoisson.pythonanywhere.com/
 
-##Local version
+## Local version
 
-###Prerequisites
+### Prerequisites
 *Python 3.x
 *Flask
 *PyPDF2
 
-###Installation
+### Installation
 
 Clone the repository:
 
@@ -27,7 +29,7 @@ Install the dependencies:
 
 pip install Flask PyPDF2
 
-###Usage
+### Usage
 
 Launch the application:
 
@@ -39,10 +41,10 @@ http://127.0.0.1:5000/
 Use the upload form to select the PDF files to merge.
 Click the "Merge" button to download the merged PDF file.
 
-##Contribution
+## Contribution
 
 If you wish to contribute to this project, create a branch and feel free to make your changes.
 
-##License
+## License
 
 This project is distributed under the MIT license. See the LICENSE file for more details.
