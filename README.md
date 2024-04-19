@@ -11,9 +11,9 @@ https://pdfmergerhugolepoisson.pythonanywhere.com/
 ## Local version
 
 ### Prerequisites
-*Python 3.x
-*Flask
-*PyPDF2
+* Python 3.x
+* Flask
+* PyPDF2
 
 ### Installation
 
