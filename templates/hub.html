@@ -1,13 +1,93 @@
 {% extends 'base.html' %}
-
 {% block head %}
-<title>Upload PDF Files</title>
-{% endblock %}
+    <title>Upload PDF Files</title>
+    <style>
+        #drop_zone {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        #file_list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #file_list li {
+            margin: 5px 0;
+        }
+    </style>
+    <script>
+        var selectedFiles = [];
 
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            var files = event.dataTransfer.files;
+            for (var i = 0; i < files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+            updateFileList();
+        }
+
+        function updateFileList() {
+            var fileList = document.getElementById('file_list');
+            fileList.innerHTML = '';
+            for (var i = 0; i < selectedFiles.length; i++) {
+                var li = document.createElement('li');
+                li.textContent = selectedFiles[i].name;
+                fileList.appendChild(li);
+            }
+        }
+
+        function inputChange() {
+            var input = document.getElementById('file_input');
+            for (var i = 0; i < input.files.length; i++) {
+                selectedFiles.push(input.files[i]);
+            }
+            updateFileList();
+}       
+
+
+
+        function submitForm() {
+            var formData = new FormData();
+            for (var i = 0; i < selectedFiles.length; i++) {
+                formData.append('fichiers[]', selectedFiles[i]);
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{{ url_for("fusionner") }}', true);
+            xhr.responseType = 'blob';
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                var downloadLink = document.createElement('a');
+                downloadLink.href = window.URL.createObjectURL(xhr.response);
+                downloadLink.download = 'fusion.pdf';
+                downloadLink.click();
+                selectedFiles = []; // Réinitialiser la variable selectedFiles à un tableau vide
+                updateFileList(); // Mettre à jour la liste des fichiers sélectionnés
+                }
+            };
+            xhr.send(formData);
+        }   
+
+    </script>
+{% endblock %}
 {% block body %}
     <h1>Upload PDF Files to merge</h1>
     <form method=post enctype=multipart/form-data action={{ url_for('fusionner') }}>
-        <input type=file name=fichiers[] multiple>
-        <input type=submit value=Upload>
+        <ul id="file_list"></ul>
+        <div id="drop_zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Déposez vos fichiers PDF ici pour les fusionner</h2>
+            <p>ou</p>
+            <label for="file_input">Parcourir...</label>
+            <input type="file" id="file_input" name="fichiers[]" multiple onchange="inputChange()">
+        </div>
+        <input type="button" value="Upload" onclick="submitForm()">
     </form>
+    
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, send_file, render_template
+from flask import Flask, request, send_file, render_template
 import os
 import PyPDF2
 
@@ -7,7 +7,6 @@ app = Flask(__name__)
 @app.route('/')
 def upload_form():
     return render_template('hub.html')
-    
 
 @app.route('/fusionner', methods=['POST'])
 def fusionner():
