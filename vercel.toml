@@ -1,0 +1,12 @@
+[builds]
+  command = "pip install -r requirements.txt && python server.py"
+
+[build.environment]
+  NODE_ENV = "production"
+
+[dev]
+  command = "flask run"
+  port = 3000
+
+[functions]
+  include = "functions/**/*"
