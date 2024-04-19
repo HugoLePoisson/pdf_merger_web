@@ -17,6 +17,13 @@
         #file_list li {
             margin: 5px 0;
         }
+        .delete-button {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+            margin-left: 10px;
+        }       
+
     </style>
     <script>
         var selectedFiles = [];
@@ -40,6 +47,45 @@
             for (var i = 0; i < selectedFiles.length; i++) {
                 var li = document.createElement('li');
                 li.textContent = selectedFiles[i].name;
+
+                var moveUpButton = document.createElement('button');
+                moveUpButton.textContent = '⇑';
+                moveUpButton.onclick = (function(index) {
+                    return function(event) {
+                        if (index > 0) {
+                            var temp = selectedFiles[index];
+                            selectedFiles[index] = selectedFiles[index - 1];
+                            selectedFiles[index - 1] = temp;
+                            updateFileList();
+                        }
+                    };
+                })(i);
+                li.appendChild(moveUpButton);
+
+                var moveDownButton = document.createElement('button');
+                moveDownButton.textContent = '⇓';
+                moveDownButton.onclick = (function(index) {
+                    return function(event) {
+                        if (index < selectedFiles.length - 1) {
+                            var temp = selectedFiles[index];
+                            selectedFiles[index] = selectedFiles[index + 1];
+                            selectedFiles[index + 1] = temp;
+                            updateFileList();
+                        }       
+                    };
+                })(i);
+                li.appendChild(moveDownButton);
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Supprimer';
+                deleteButton.onclick = (function(index) { // Utiliser une fonction anonyme pour capturer la valeur de i
+                    return function(event) {
+                        selectedFiles.splice(index, 1); // Supprimer le fichier de la liste
+                        updateFileList(); // Mettre à jour la liste des fichiers sélectionnés
+                    };
+                })(i);
+                li.appendChild(deleteButton);
+
                 fileList.appendChild(li);
             }
         }
