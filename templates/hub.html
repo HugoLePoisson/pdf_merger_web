@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block head %}
     <title>Upload PDF Files</title>
     <style>
@@ -22,9 +23,35 @@
             color: red;
             font-weight: bold;
             margin-left: 10px;
-        }       
-
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Upload PDF Files to merge</h1>
+        <form method=post enctype=multipart/form-data action={{ url_for('fusionner') }}>
+            <ul id="file_list" class="list-group"></ul>
+            <div id="drop_zone" class="border border-secondary p-4 text-center" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2 class="mb-3">Déposez vos fichiers PDF ici pour les fusionner</h2>
+                <p class="mb-3">ou</p>
+                <label for="file_input" class="btn btn-primary">Parcourir...</label>
+                <input type="file" id="file_input" name="fichiers[]" multiple onchange="inputChange()" style="display: none;">
+            </div>
+            <button type="button" class="btn btn-success mt-3" onclick="submitForm()">Download</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
     <script>
         var selectedFiles = [];
 
@@ -46,9 +73,11 @@
             fileList.innerHTML = '';
             for (var i = 0; i < selectedFiles.length; i++) {
                 var li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 li.textContent = selectedFiles[i].name;
 
                 var moveUpButton = document.createElement('button');
+                moveUpButton.className = 'btn btn-secondary';
                 moveUpButton.textContent = '⇑';
                 moveUpButton.onclick = (function(index) {
                     return function(event) {
@@ -63,6 +92,7 @@
                 li.appendChild(moveUpButton);
 
                 var moveDownButton = document.createElement('button');
+                moveDownButton.className = 'btn btn-secondary';
                 moveDownButton.textContent = '⇓';
                 moveDownButton.onclick = (function(index) {
                     return function(event) {
@@ -71,17 +101,18 @@
                             selectedFiles[index] = selectedFiles[index + 1];
                             selectedFiles[index + 1] = temp;
                             updateFileList();
-                        }       
+                        }
                     };
                 })(i);
                 li.appendChild(moveDownButton);
 
                 var deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger delete-button';
                 deleteButton.textContent = 'Supprimer';
-                deleteButton.onclick = (function(index) { // Utiliser une fonction anonyme pour capturer la valeur de i
+                deleteButton.onclick = (function(index) {
                     return function(event) {
-                        selectedFiles.splice(index, 1); // Supprimer le fichier de la liste
-                        updateFileList(); // Mettre à jour la liste des fichiers sélectionnés
+                        selectedFiles.splice(index, 1);
+                        updateFileList();
                     };
                 })(i);
                 li.appendChild(deleteButton);
@@ -96,9 +127,7 @@
                 selectedFiles.push(input.files[i]);
             }
             updateFileList();
-}       
-
-
+        }
 
         function submitForm() {
             var formData = new FormData();
@@ -110,30 +139,15 @@
             xhr.responseType = 'blob';
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                var downloadLink = document.createElement('a');
-                downloadLink.href = window.URL.createObjectURL(xhr.response);
-                downloadLink.download = 'fusion.pdf';
-                downloadLink.click();
-                selectedFiles = []; // Réinitialiser la variable selectedFiles à un tableau vide
-                updateFileList(); // Mettre à jour la liste des fichiers sélectionnés
+                    var downloadLink = document.createElement('a');
+                    downloadLink.href = window.URL.createObjectURL(xhr.response);
+                    downloadLink.download = 'fusion.pdf';
+                    downloadLink.click();
+                    selectedFiles = [];
+                    updateFileList();
                 }
             };
             xhr.send(formData);
-        }   
-
+        }
     </script>
-{% endblock %}
-{% block body %}
-    <h1>Upload PDF Files to merge</h1>
-    <form method=post enctype=multipart/form-data action={{ url_for('fusionner') }}>
-        <ul id="file_list"></ul>
-        <div id="drop_zone" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>Déposez vos fichiers PDF ici pour les fusionner</h2>
-            <p>ou</p>
-            <label for="file_input">Parcourir...</label>
-            <input type="file" id="file_input" name="fichiers[]" multiple onchange="inputChange()">
-        </div>
-        <input type="button" value="Upload" onclick="submitForm()">
-    </form>
-    
 {% endblock %}
