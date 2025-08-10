@@ -25,9 +25,9 @@ Go to the project directory:
 
 cd fusionneur_pdf_web
 
-Install the dependencies:
+Install the dependencies (using pip or other):
 
-pip install Flask PyPDF2
+pip install -r requirements.txt
 
 ### Usage
 
